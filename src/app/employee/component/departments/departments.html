@@ -1,0 +1,8 @@
+<ng-container>
+    <app-toolbar title="Employees" [views]="['list']" (searchChange)="onSearch($event)"
+        [baseRoute]="'employees/employee-department/employee-department-form'">
+    </app-toolbar>
+
+    <app-list [columns]="columnData" [data]="filteredData" [groupBy]="'department'" [baseRoute]="'employees/employee-department'"></app-list>
+
+</ng-container>

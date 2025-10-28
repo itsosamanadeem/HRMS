@@ -1,0 +1,43 @@
+<div class="p-6 bg-white rounded-2xl shadow-xl w-3/4 mx-auto mt-8 border border-blue-200">
+  <!-- Chart Type Navigation -->
+  <nav class="flex gap-6 justify-center text-2xl text-blue-600 mt-6">
+    <button
+      (click)="setChartType('bar')"
+      [ngClass]="{ 'text-blue-800 scale-110': type === 'bar' }"
+      class="transition-all hover:scale-110"
+    >
+      <fa-icon [icon]="faBarChart"></fa-icon>
+    </button>
+    <button
+      (click)="setChartType('line')"
+      [ngClass]="{ 'text-blue-800 scale-110': type === 'line' }"
+      class="transition-all hover:scale-110"
+    >
+      <fa-icon [icon]="faLineChart"></fa-icon>
+    </button>
+    <button
+      (click)="setChartType('pie')"
+      [ngClass]="{ 'text-blue-800 scale-110': type === 'pie' }"
+      class="transition-all hover:scale-110"
+    >
+      <fa-icon [icon]="faPieChart"></fa-icon>
+    </button>
+  </nav>
+
+  <!-- Title -->
+  <h2 class="text-xl font-semibold text-blue-800 mb-4 text-center">
+    {{ title }}
+  </h2>
+
+  <!-- Chart -->
+  <div
+    class="p-6 bg-white rounded-2xl shadow-xl w-full sm:w-3/4 mx-auto mt-8 border border-blue-200"
+  >
+    <canvas
+      baseChart
+      [data]="chartData"
+      [options]="chartOptions"
+      [type]="type"
+    ></canvas>
+  </div>
+</div>

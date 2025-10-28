@@ -1,0 +1,29 @@
+/* Modern scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background-color: rgba(99, 102, 241, 0.4);
+  border-radius: 9999px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background-color: rgba(241, 245, 249, 0.3);
+}
+
+/* Smooth animations */
+* {
+  transition: all 0.25s ease-in-out;
+}
+
+/* Glow on hover */
+.group:hover {
+  box-shadow: 0 8px 25px rgba(79, 70, 229, 0.15);
+}
+
+/* Responsive text tuning */
+@media (max-width: 768px) {
+  h2 {
+    text-align: center;
+  }
+}

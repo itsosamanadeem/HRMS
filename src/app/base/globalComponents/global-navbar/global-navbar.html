@@ -1,0 +1,67 @@
+<nav class="fixed top-0 left-0 w-full bg-white/80 backdrop-blur-md shadow-md px-4 sm:px-8 py-3 flex justify-start gap-4 items-center z-20">
+  <!-- Logo & Title -->
+  <div class="flex items-center gap-3 hover:cursor-pointer" [routerLink]="['/']">
+    <fa-icon *ngIf="icon" [icon]="icon" class="text-2xl text-gray-800"></fa-icon>
+    <h2 class="text-xl font-semibold text-gray-800">{{ title }}</h2>
+  </div>
+
+  <!-- Desktop Dropdowns -->
+  <div class="hidden md:flex gap-6">
+    <div *ngFor="let dropdown of dropdowns" class="relative">
+      <button
+        (click)="toggleDropdown(dropdown.label)"
+        class="flex items-center gap-1 bg-white text-gray-700 hover:text-blue-600 font-medium px-4 py-2 rounded-lg shadow-sm transition-all hover:border-blue-400"
+      >
+        {{ dropdown.label }}
+        <fa-icon [icon]="faChevronDown" class="transition-transform duration-200" [ngClass]="{'rotate-180': openDropdown === dropdown.label}"></fa-icon>
+      </button>
+
+      <!-- Dropdown Menu -->
+      <div
+        *ngIf="openDropdown === dropdown.label"
+        class="absolute left-0 flex flex-col bg-white rounded-xl shadow-lg py-2 w-56 mt-2 border border-gray-100 z-50 animate-fadeIn"
+      >
+        <a
+          *ngFor="let item of dropdown.items"
+          [routerLink]="item.route"
+          (click)="closeDropdown()"
+          class="px-4 py-2 text-gray-700 hover:bg-blue-50 hover:text-blue-600 transition-all"
+        >
+          {{ item.name }}
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Hamburger -->
+  <div class="md:hidden flex items-center">
+    <button (click)="mobileMenuOpen = !mobileMenuOpen" class="p-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-400">
+      <svg *ngIf="!mobileMenuOpen" class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4 8h16M4 16h16"></path>
+      </svg>
+      <svg *ngIf="mobileMenuOpen" class="w-6 h-6 text-gray-800" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div *ngIf="mobileMenuOpen" class="absolute top-full left-0 w-full bg-white shadow-md border-t border-gray-100 md:hidden animate-fadeIn">
+    <div *ngFor="let dropdown of dropdowns" class="flex flex-col">
+      <button (click)="toggleMobileDropdown(dropdown.label)" class="flex justify-between items-center w-full px-4 py-3 text-gray-700 font-medium hover:bg-blue-50 transition-all">
+        {{ dropdown.label }}
+        <fa-icon [icon]="faChevronDown" [ngClass]="{'rotate-180': mobileDropdownOpen === dropdown.label}"></fa-icon>
+      </button>
+      <div *ngIf="mobileDropdownOpen === dropdown.label" class="flex flex-col pl-6">
+        <a
+          *ngFor="let item of dropdown.items"
+          [routerLink]="item.route"
+          (click)="closeMobileMenu()"
+          class="py-2 text-gray-700 hover:text-blue-600 transition-all"
+        >
+          {{ item.name }}
+        </a>
+      </div>
+    </div>
+  </div>
+</nav>

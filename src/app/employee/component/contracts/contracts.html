@@ -1,0 +1,4 @@
+<app-toolbar title="Employees" [views]="['list']" (searchChange)="onSearch($event)" [baseRoute]="'employees/employee-form'">
+</app-toolbar>
+
+<app-list [columns]="dataColumn" [data]="filteredEmployees" [groupBy]="'status'" [baseRoute]="'employees/employee-form'"></app-list>

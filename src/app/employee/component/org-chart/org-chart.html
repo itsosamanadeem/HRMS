@@ -1,0 +1,78 @@
+<!-- <app-toolbar></app-toolbar> -->
+
+<div class="org-wrapper p-6">
+  <!-- Search -->
+  <div class="flex justify-center mb-6">
+    <input type="text" placeholder="Search name, job, or department..."
+      class="border rounded-lg px-4 py-2 w-80 text-sm focus:ring-2 focus:ring-blue-400 outline-none"
+      [(ngModel)]="search" />
+  </div>
+
+  <!-- Org Tree -->
+  <div class="flex flex-col justify-center overflow-x-auto">
+    <ng-container *ngFor="let root of asArray(tree)">
+      <ng-container *ngIf="matches(root)">
+        <ng-container *ngTemplateOutlet="nodeTpl; context: { $implicit: root }" class=""></ng-container>
+      </ng-container>
+    </ng-container>
+  </div>
+
+  <!-- Node Template -->
+  <ng-template #nodeTpl let-node>
+    <div class="org-node flex flex-col items-center relative w-full">
+      <!-- Card -->
+      <div
+        class="org-card bg-white rounded-2xl shadow-md border hover:shadow-xl transition-all duration-300 w-60 text-center relative cursor-pointer mt-8"
+        (click)="toggle(node); select(node); $event.stopPropagation()">
+        <!-- Dynamic Top Bar -->
+        <div class="top-bar h-6 rounded-t-2xl" [style.background-color]="getDepartmentColor(node.department)"></div>
+
+        <!-- Avatar -->
+        <div
+          class="avatar w-16 h-16 rounded-full overflow-hidden border-4 border-white shadow-md absolute -top-8 left-1/2 transform -translate-x-1/2 bg-gray-100">
+          <img *ngIf="node.imageUrl; else fallback" [src]="node.imageUrl" class="w-full h-full object-cover" />
+        </div>
+        <ng-template #fallback>
+          <div class="w-full h-full flex items-center justify-center bg-gray-200 text-gray-600 font-bold text-lg">
+            {{ node.name[0] }}
+          </div>
+        </ng-template>
+
+        <!-- Info -->
+        <div class="pt-10 pb-3 px-3">
+          <div class="font-semibold text-gray-800 text-sm truncate">
+            {{ node.name }}
+          </div>
+          <div class="text-xs text-gray-500 truncate">
+            {{ node.jobTitle }}
+          </div>
+          <div class="text-[11px] text-gray-400">
+            {{ node.department }}
+          </div>
+          <div class="flex justify-center mt-1">
+            <div class="w-2 h-2 rounded-full" [ngClass]="node.active ? 'bg-green-500' : 'bg-gray-400'"></div>
+          </div>
+        </div>
+
+        <!-- Subordinate Count -->
+        <div *ngIf="node.children?.length"
+          class="bg-gray-50 text-xs text-gray-700 py-1 rounded-b-2xl border-t flex justify-center items-center gap-1">
+          <span>▾ {{ node.children.length }} people</span>
+        </div>
+      </div>
+
+      <!-- Vertical connector -->
+      <div *ngIf="node.children?.length && !node.collapsed" class="connector-vertical"></div>
+
+      <!-- Children -->
+      <div *ngIf="node.children?.length && !node.collapsed" class="children flex justify-center flex-wrap mt-6 gap-8">
+        <div *ngFor="let child of node.children" class="child-item flex flex-col items-center relative">
+          <div class="connector-horizontal"></div>
+          <ng-container *ngIf="matches(child)">
+            <ng-container *ngTemplateOutlet="nodeTpl; context: { $implicit: child }"></ng-container>
+          </ng-container>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</div>

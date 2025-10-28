@@ -1,0 +1,46 @@
+.org-wrapper {
+  min-height: 100vh;
+  overflow-x: auto;
+  padding-bottom: 2rem;
+}
+
+/* Connectors */
+.connector-vertical {
+  width: 2px;
+  height: 30px;
+  background-color: #000000;
+  margin: 10px 0;
+}
+
+.connector-horizontal {
+  position: absolute;
+  top: -30px;
+  width: 2px;
+  height: 30px;
+  left: 50%;
+  transform: translateX(-50%) rotate(90deg);
+  background-color: #000000;
+}
+
+/* Hover */
+.org-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .org-card {
+    width: 12rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .org-card {
+    width: 10rem;
+  }
+  .avatar {
+    width: 3rem;
+    height: 3rem;
+    top: -1.5rem;
+  }
+}

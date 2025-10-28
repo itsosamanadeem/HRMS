@@ -1,0 +1,60 @@
+<div
+  class="bg-white/80 p-4 shadow-sm gap-4 sticky top-16 z-10 flex justify-evenly items-center">
+  <!-- New Button -->
+  <div class="flex items-center gap-2">
+    <button (click)="onNewClick()"
+      class="md:flex md:items-center md:gap-2 bg-blue-600 text-white px-3 py-2 rounded-lg hover:bg-blue-700 transition-all hover:cursor-pointer">
+      <fa-icon [icon]="faPlus"></fa-icon>
+      <span class="hidden md:inline">New</span>
+    </button>
+    <h2 class="md:block md:text-xl md:font-semibold md:text-gray-800">{{ title }}</h2>
+  </div>
+
+  <!-- Title -->
+
+  <!-- Search -->
+  <div class="md:flex md:items-center md:w-3/4 ">
+    <!-- Desktop Search (sm+) -->
+    <div
+      class="hidden md:flex md:items-center md:w-full md:bg-white/70 md:backdrop-blur-md md:border md:border-blue-200 md:rounded-2xl md:shadow-sm md:px-4 md:py-2 md:transition-all md:focus-within:shadow-lg md:focus-within:border-blue-400">
+      <fa-icon [icon]="faSearch" class="text-blue-500 text-base mr-2"></fa-icon>
+      <input type="text" [(ngModel)]="searchTerm" (input)="onSearchInput()"
+        placeholder="Search employees, departments..."
+        class="w-full bg-transparent placeholder-gray-400 text-gray-700 text-sm focus:outline-none" />
+    </div>
+
+
+    <!-- Mobile Search (hidden until clicked) -->
+    <div class="flex items-center mt-2 w-full animate-slideDown md:hidden">
+      <input type="text" [(ngModel)]="searchTerm" (input)="onSearchInput()"
+        placeholder="Search employees, departments... 2"
+        class="w-full bg-white border border-blue-200 rounded-2xl shadow-sm px-4 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all md:hidden" />
+    </div>
+  </div>
+
+  <!-- View Buttons -->
+  <div class="md:flex md:justify-between ">
+    <!-- Desktop View Buttons -->
+    <div class="hidden md:flex md:items-center md:gap-1 md:bg-gray-100 md:rounded-xl md:p-1">
+      <button *ngFor="let view of views" (click)="onViewSelect(view)"
+        class="md:p-2 md:rounded-lg md:hover:bg-white md:transition-all" [class.bg-white]="activeView === view">
+        <fa-icon [icon]="viewIcons[view]" [ngClass]="activeView === view ? 'text-blue-600' : 'text-gray-500'"></fa-icon>
+      </button>
+    </div>
+
+    <!-- Mobile Dropdown for Views -->
+    <div class="relative md:hidden">
+      <button (click)="mobileViewOpen = !mobileViewOpen"
+        class="p-2 rounded-lg bg-gray-100 hover:bg-gray-200 transition-all focus:outline-none md:hidden">
+        <fa-icon [icon]="viewIcons[activeView]" class="text-gray-700"></fa-icon>
+      </button>
+      <div *ngIf="mobileViewOpen"
+        class="absolute right-0 mt-2 w-36 bg-white rounded-lg shadow-lg border border-gray-200 z-50 animate-fadeIn md:hidden">
+        <button *ngFor="let view of views" (click)="onViewSelect(view); mobileViewOpen=false"
+          class="w-full text-left px-4 py-2 hover:bg-blue-50 hover:text-blue-600 transition-all">
+          {{ view | titlecase }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

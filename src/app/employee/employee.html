@@ -1,0 +1,22 @@
+<app-global-navbar (mouseenter)="onEnter()" (mouseleave)="onLeave()"></app-global-navbar>
+
+<main class="w-full min-h-screen pt-8">
+  
+  <ng-container *ngIf="!isChildRoute">
+    <app-toolbar title="Employees" [views]="['list', 'graph', 'kanban', 'hierarchy']" 
+      (searchChange)="onSearch($event)"
+      (viewChange)="onViewChange($event)" 
+      [baseRoute]="'employees/employee-form'">
+    </app-toolbar>
+
+    <ng-container [ngSwitch]="view">
+      <app-list *ngSwitchCase="'list'" [data]="filteredEmployees" [columns]="employeeColumns" [enableActions]="false" [baseRoute]="'employees/employee-form'"></app-list>
+      <app-kanban *ngSwitchCase="'kanban'" [data]="filteredEmployees" [groupBy]="'status'" [title]="'Employee Kanban'" [baseRoute]="'employees/employee-form'"></app-kanban>
+      <app-graph *ngSwitchCase="'graph'" [labels]="['Jan', 'Feb', 'Mar', 'Apr', 'May']"
+        [data]="[45, 60, 75, 30, 90]" title="Monthly Sales"></app-graph>
+      <app-hierarchy *ngSwitchCase="'hierarchy'" [data]="employeeHierarchy" title="Organization Structure"></app-hierarchy>
+    </ng-container>
+  </ng-container>
+
+  <router-outlet *ngIf="isChildRoute"></router-outlet>
+</main>

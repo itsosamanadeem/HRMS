@@ -1,0 +1,119 @@
+<!-- Background Overlay -->
+<div *ngIf="show"
+  class="fixed inset-0 bg-black/50 backdrop-blur-sm flex justify-center items-center z-50 transition-opacity animate-fadeIn">
+  <!-- Modal Container -->
+  <div
+    class="bg-white/95 backdrop-blur-2xl rounded-3xl shadow-2xl w-[95%] md:w-[40rem] max-h-[60vh] flex flex-col border border-gray-100 animate-slideUp overflow-hidden">
+    <!-- Header -->
+    <div
+      class="flex justify-between items-center px-8 py-6 border-b border-gray-200 bg-gradient-to-r from-blue-500 to-blue-600 text-white sticky top-0 z-10">
+      <div>
+        <h2 class="text-2xl font-semibold tracking-wide">{{ title }}</h2>
+        <p class="text-sm opacity-90">Fill in the details below</p>
+      </div>
+      <button (click)="onClose()" class="text-white/80 hover:text-white transition-all text-2xl">
+        &times;
+      </button>
+    </div>
+
+    <!-- Scrollable Form Content -->
+    <div class="flex-1 overflow-y-auto px-8 py-6 custom-scrollbar">
+      <form (ngSubmit)="onSubmit()" class="space-y-6">
+        <ng-container *ngFor="let field of fields">
+          <div>
+            <label class="block text-gray-700 font-medium mb-1 tracking-wide" [for]="field.name">{{ field.label
+              }}</label>
+
+            <!-- Text -->
+            <input *ngIf="field.type === 'text'" [id]="field.name" type="text" [(ngModel)]="formData[field.name]"
+              [name]="field.name" [placeholder]="field.placeholder || ''"
+              class="w-full border border-gray-200 rounded-2xl px-4 py-2.5 focus:ring-2 focus:ring-blue-400 focus:border-blue-400 bg-white shadow-sm placeholder-gray-400 transition-all hover:border-blue-300" />
+
+            <!-- Number -->
+            <input *ngIf="field.type === 'number'" [id]="field.name" type="number" [(ngModel)]="formData[field.name]"
+              [name]="field.name"
+              class="w-full border border-gray-200 rounded-2xl px-4 py-2.5 focus:ring-2 focus:ring-blue-400 bg-white shadow-sm transition-all hover:border-blue-300" />
+
+            <!-- Date -->
+            <div *ngIf="field.type === 'date'" class="relative group">
+              <input [id]="field.name" type="date" [(ngModel)]="formData[field.name]" [name]="field.name"
+                class="peer w-full border border-gray-200 rounded-2xl px-4 py-2.5 focus:ring-2 focus:ring-blue-400 bg-white shadow-sm transition-all hover:border-blue-300 cursor-pointer text-gray-700" />
+              <svg xmlns="http://www.w3.org/2000/svg"
+                class="absolute right-4 top-3.5 w-5 h-5 text-gray-400 peer-focus:text-blue-500 pointer-events-none transition-colors"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M8 7V3m8 4V3m-9 8h10m-12 8h14a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </div>
+
+            <!-- Rating -->
+            <div *ngIf="field.type === 'rating'" class="space-y-2">
+              <label class="block text-gray-700 font-medium mb-1 tracking-wide">{{ field.label }}</label>
+
+              <div class="flex flex-wrap gap-2 justify-between">
+                <button *ngFor="let rate of [].constructor(10); let i = index" type="button"
+                  (click)="formData[field.name] = i + 1" [ngClass]="{
+        'bg-blue-500 text-white border-blue-500 shadow-md shadow-blue-200 scale-110':
+          formData[field.name] === i + 1,
+        'bg-gray-100 text-gray-700 border-gray-200': formData[field.name] !== i + 1
+      }" class="w-10 h-10 rounded-full border flex items-center justify-center font-medium transition-all duration-200 hover:scale-110 hover:border-blue-400 hover:bg-blue-50">
+                  {{ i + 1 }}
+                </button>
+
+                <!-- Average Option -->
+                <button type="button" (click)="formData[field.name] = 'average'" [ngClass]="{
+        'bg-gradient-to-r from-yellow-400 to-yellow-500 text-white shadow-md shadow-yellow-200 scale-110':
+          formData[field.name] === 'average',
+        'bg-gray-100 text-gray-700 border-gray-200': formData[field.name] !== 'average'
+      }" class="px-4 py-2 rounded-full border font-medium transition-all duration-200 hover:scale-105 hover:border-yellow-400 hover:bg-yellow-50">
+                  Average
+                </button>
+              </div>
+
+              <div class="flex justify-between text-xs text-gray-400 mt-1">
+                <span>Poor</span>
+                <span>Average</span>
+                <span>Excellent</span>
+              </div>
+            </div>
+
+            <!-- Textarea -->
+            <textarea *ngIf="field.type === 'textarea'" [id]="field.name" [(ngModel)]="formData[field.name]"
+              [name]="field.name" rows="3" [placeholder]="field.placeholder || ''"
+              class="w-full border border-gray-200 rounded-2xl px-4 py-2.5 focus:ring-2 focus:ring-blue-400 bg-white shadow-sm placeholder-gray-400 transition-all hover:border-blue-300"></textarea>
+
+            <!-- Select -->
+            <div *ngIf="field.type === 'select'" class="relative group">
+              <select [id]="field.name" [(ngModel)]="formData[field.name]" [name]="field.name"
+                class="appearance-none w-full border border-gray-200 rounded-2xl px-4 py-2.5 focus:ring-2 focus:ring-blue-400 bg-white shadow-sm cursor-pointer transition-all hover:border-blue-300 text-gray-700">
+                <option value="" disabled selected hidden>
+                  Select {{ field.label }}
+                </option>
+                <option *ngFor="let opt of field.options" [value]="opt.value">
+                  {{ opt.label }}
+                </option>
+              </select>
+              <svg xmlns="http://www.w3.org/2000/svg"
+                class="absolute right-4 top-3.5 w-5 h-5 text-gray-400 group-focus-within:text-blue-500 pointer-events-none transition-colors"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </div>
+          </div>
+        </ng-container>
+        <!-- Footer (Fixed at bottom) -->
+        <div class="flex justify-between gap-3 px-8 py-4 border-t border-gray-200 bg-gray-50 sticky -bottom-5 z-10">
+          <button type="button" (click)="onClose()"
+            class="px-5 py-2 rounded-xl bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium transition-all">
+            Cancel
+          </button>
+          <button type="submit"
+            class="px-5 py-2 rounded-xl bg-gradient-to-r from-blue-500 to-blue-600 text-white font-semibold shadow-md hover:shadow-lg hover:scale-[1.02] transition-all">
+            Save
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </div>
+</div>

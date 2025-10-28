@@ -1,0 +1,5 @@
+<app-toolbar [views]="['list']" [title]="'Employee Skill'" (searchChange)="onSearch($event)"></app-toolbar>
+
+<div class="p-6 space-y-6">
+  <app-list [columns]="labels" [data]="filteredSkills" [groupBy]="'name'" ></app-list>
+</div>

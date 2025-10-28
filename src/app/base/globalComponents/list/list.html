@@ -1,0 +1,194 @@
+<div class="p-6">
+  <div class="bg-white/70 backdrop-blur-md rounded-2xl shadow-lg overflow-hidden border border-blue-200">
+
+    <!-- GROUPED VIEW -->
+    <ng-container *ngIf="groupBy && groupedData?.length; else simpleTable">
+      <div class="space-y-4">
+        <!-- Group dropdowns -->
+        <div *ngFor="let group of groupedData; let gi = index"
+          class="border border-blue-200 rounded-md overflow-hidden">
+          <!-- Group Header -->
+          <div class="flex justify-between items-center bg-blue-400/20 px-4 py-3 cursor-pointer select-none"
+            (click)="toggleGroup(gi)">
+            <h3 class="text-lg font-semibold text-blue-800">
+              {{ group.key | titlecase }} ({{ group.items.length }})
+            </h3>
+            <span class="text-blue-700 text-sm">
+              {{ expandedGroups[gi] ? '▲ Collapse' : '▼ Expand' }}
+            </span>
+          </div>
+
+          <!-- Scrollable group table -->
+          <div *ngIf="expandedGroups[gi]" class="overflow-y-auto max-h-80 transition-all duration-300">
+            <!-- Table for md+ screens -->
+            <div class="hidden md:block overflow-x-auto">
+              <table class="min-w-full border-collapse text-gray-700">
+                <thead class="bg-blue-100/60 sticky top-0 z-10">
+                  <tr>
+                    <th *ngFor="let col of columns" class="px-4 py-3 text-left font-semibold uppercase text-sm">
+                      {{ col.replace('_', ' ') }}
+                    </th>
+                    <th *ngIf="enableActions" class="px-4 py-3 text-center font-semibold uppercase text-sm">Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let row of group.items; let i = index; trackBy: trackByIndex"
+                    class="hover:bg-blue-100/60 transition-colors border-t border-blue-100">
+                    <td *ngFor="let col of columns" class="px-4 py-2" (click)="onEditClick(row, i)">
+                      <img *ngIf="col === 'imageUrl'" [src]="row[col]" alt="avatar"
+                        class="w-10 h-10 rounded-full shadow-md" />
+                      <span *ngIf="col === 'status'" class="px-3 py-1 rounded-full text-sm font-medium" [ngClass]="{
+                          'bg-green-100 text-green-700': row[col] === 'active',
+                          'bg-red-500 text-yellow-700': row[col] === 'on_leave',
+                          'bg-blue-100 text-blue-700': row[col] === 'probation',
+                          'bg-red-100 text-red-700': row[col] === 'inactive'
+                        }">
+                        {{ row[col] }}
+                      </span>
+                      <span *ngIf="col !== 'imageUrl' && col !== 'status'">{{ row[col] }}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Mobile card view -->
+            <div class="md:hidden space-y-4 p-2">
+              <div *ngFor="let row of group.items; let i = index; trackBy: trackByIndex"
+                class="overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer relative">
+                <div class="flex items-center gap-4 p-4 " (click)="onEditClick(row,i)">
+                  <div
+                    class="w-20 h-20 rounded-xl overflow-hidden shadow-sm ring-1 ring-slate-200 flex-shrink-0 bg-gray-100">
+                    <img [src]="row.imageUrl" alt="{{row.name}}"
+                      class="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
+                  </div>
+
+                  <div class="flex flex-col text-slate-800">
+                    <h6 class="text-sm font-semibold tracking-tight" *ngIf="row.name" >{{ row.name }}</h6>
+                    <span class="text-sm text-slate-500 mt-1" *ngIf="row.department">{{row.department}}</span>
+                    <span class="text-sm text-slate-500 mt-1" *ngIf="row.jobTitle">{{row.jobTitle}}</span>
+                    <span class="text-sm text-slate-500 mt-1" *ngIf="row.certificationName">{{row.certificationName}}</span>
+                    <span class="text-sm text-slate-500 mt-1" *ngIf="row.provider">{{row.provider}}</span>
+                    <div class="flex gap-4">
+                      <span class="text-sm text-slate-500 mt-1 font-semibold" *ngIf="row.skills">{{row.skills}}</span>
+                      <span class="text-sm text-slate-500 mt-1 font-semibold" *ngIf="row.level">{{row.level}}</span>
+                    </div>
+                    <div class="flex gap-4">
+                      <span class="text-sm text-slate-500 mt-1 font-semibold" *ngIf="row.issueDate">{{row.issueDate}}</span>
+                      <span class="text-sm text-slate-500 mt-1 font-semibold" *ngIf="row.expireDate">{{row.expireDate}}</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-slate-500 mt-1" *ngIf="row.email">
+                      <fa-icon [icon]="faMail" class="text-blue-500"></fa-icon>
+                      <span>{{ row.email }}</span>
+                    </div>
+                    <div class="flex items-center gap-2 text-sm text-slate-500 mt-1" *ngIf="row.phone">
+                      <fa-icon [icon]="faMobile" class="text-blue-500"></fa-icon>
+                      <span>{{ row.phone }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Status Badge -->
+                  <div *ngFor="let col of columns" class="absolute top-3 right-3">
+                    <span *ngIf="col === 'status'" class="px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm"
+                      [ngClass]="{
+                          'bg-green-100 text-green-700 ring-1 ring-green-200': row[col] === 'active',
+                          'bg-red-200 text-red-800 ring-1 ring-red-300': row[col] === 'on-leave',
+                          'bg-blue-100 text-blue-700 ring-1 ring-blue-200': row[col] === 'probation',
+                          'bg-gray-200 text-gray-700 ring-1 ring-gray-300': row[col] === 'inactive'
+                        }">
+                      {{ row[col] | titlecase }}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+    <!-- ❌ SIMPLE UNGROUPED TABLE -->
+    <ng-template #simpleTable>
+      <!-- Table view for medium+ screens -->
+      <div class="hidden md:block overflow-x-auto">
+        <table class="min-w-full border-collapse text-gray-700">
+          <thead class="bg-blue-100/60">
+            <tr>
+              <th *ngFor="let col of columns" class="px-4 py-3 text-left font-semibold uppercase text-sm">
+                {{ col.replace('_', ' ') }}
+              </th>
+              <th *ngIf="enableActions" class="px-4 py-3 text-center font-semibold uppercase text-sm">Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <tr *ngFor="let row of data; let i = index; trackBy: trackByIndex"
+              class="hover:bg-blue-100/60 transition-colors border-t border-blue-100">
+              <td *ngFor="let col of columns" class="px-4 py-2 hover:cursor-pointer" (click)="onEditClick(row,i)">
+                <img *ngIf="col === 'imageUrl'" [src]="row[col]" alt="avatar"
+                  class="w-10 h-10 rounded-full shadow-md" />
+                <span *ngIf="col === 'status'" class="px-3 py-1 rounded-full text-sm font-medium" [ngClass]="{
+                'bg-green-100 text-green-700': row[col] === 'active',
+                'bg-red-500 text-yellow-700': row[col] === 'on_leave',
+                'bg-blue-100 text-blue-700': row[col] === 'probation',
+                'bg-red-100 text-red-700': row[col] === 'inactive'
+              }">{{ row[col] }}</span>
+                <span *ngIf="col !== 'imageUrl' && col !== 'status'">{{ row[col] }}</span>
+              </td>
+            </tr>
+            <tr *ngIf="!data.length">
+              <td [attr.colspan]="columns.length + (enableActions ? 1 : 0)"
+                class="text-center py-6 text-gray-500 italic">
+                No records found.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Card view for small screens -->
+      <div class="md:hidden space-y-4 p-3 bg-gradient-to-b from-slate-50 to-white">
+        <div *ngFor="let row of data; let i = index; trackBy: trackByIndex"
+          class="relative overflow-hidden rounded-2xl bg-white border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+          <!-- Image & Main Info -->
+          <div class="flex items-center gap-4 p-4" (click)="onEditClick(row,i)">
+            <div class="w-20 h-20 rounded-xl overflow-hidden shadow-sm ring-1 ring-slate-200 flex-shrink-0 bg-gray-100">
+              <img [src]="row.imageUrl" alt="{{row.name}}"
+                class="w-full h-full object-cover hover:scale-110 transition-transform duration-300" />
+            </div>
+
+            <div class="flex flex-col text-slate-800">
+              <h6 class="text-sm font-semibold tracking-tight">{{ row.name }}</h6>
+              <span class="text-sm text-slate-500 mt-1">{{row.jobTitle}}</span>
+              <div class="flex items-center gap-2 text-sm text-slate-500 mt-1">
+                <fa-icon [icon]="faMail" class="text-blue-500"></fa-icon>
+                <span>{{ row.email }}</span>
+              </div>
+              <div class="flex items-center gap-2 text-sm text-slate-500 mt-1">
+                <fa-icon [icon]="faMobile" class="text-blue-500"></fa-icon>
+                <span>{{ row.phone }}</span>
+              </div>
+            </div>
+
+            <!-- Status Badge -->
+            <div *ngFor="let col of columns" class="absolute top-3 right-3">
+              <span *ngIf="col === 'status'" class="px-3 py-1.5 rounded-full text-xs font-semibold shadow-sm" [ngClass]="{
+            'bg-green-100 text-green-700 ring-1 ring-green-200': row[col] === 'active',
+            'bg-red-200 text-red-800 ring-1 ring-red-300': row[col] === 'on-leave',
+            'bg-blue-100 text-blue-700 ring-1 ring-blue-200': row[col] === 'probation',
+            'bg-gray-200 text-gray-700 ring-1 ring-gray-300': row[col] === 'inactive'
+          }">
+                {{ row[col] | titlecase }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- No Records -->
+        <div *ngIf="!data.length" class="text-center py-6 text-gray-500 italic">
+          No records found.
+        </div>
+      </div>
+
+    </ng-template>
+  </div>
+</div>
